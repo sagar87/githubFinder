@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import PropTypes from "prop-types";
+import GithubContext from "../../contexts/github/githubContext";
 
-const Search = ({ showClear, clearSearch, searchCallback, setAlert }) => {
+const Search = ({ showClear, clearSearch, setAlert }) => {
+  const githubContext = useContext(GithubContext);
   const [query, setQuery] = useState("");
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -12,7 +14,8 @@ const Search = ({ showClear, clearSearch, searchCallback, setAlert }) => {
     if (query === "") {
       setAlert("Please enter something", "light");
     } else {
-      searchCallback(query);
+      console.log("SEARCH: CALLING");
+      githubContext.searchUsers(query);
       setQuery("");
     }
   };
@@ -29,8 +32,11 @@ const Search = ({ showClear, clearSearch, searchCallback, setAlert }) => {
         />
         <input type="submit" className="btn btn-dark btn-block" />
       </form>
-      {showClear && (
-        <button className="btn btn-light btn-block" onClick={clearSearch}>
+      {githubContext.users.length > 0 && (
+        <button
+          className="btn btn-light btn-block"
+          onClick={githubContext.clearUsers}
+        >
           Clear
         </button>
       )}
@@ -39,9 +45,6 @@ const Search = ({ showClear, clearSearch, searchCallback, setAlert }) => {
 };
 
 Search.propTypes = {
-  searchCallback: PropTypes.func.isRequired,
-  clearSearch: PropTypes.func.isRequired,
-  showClear: PropTypes.bool.isRequired,
   setAlert: PropTypes.func.isRequired,
 };
 
